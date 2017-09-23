@@ -8,6 +8,10 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            url "https://maven.java.net/content/groups/public/"
+        }
+
 
 
     }

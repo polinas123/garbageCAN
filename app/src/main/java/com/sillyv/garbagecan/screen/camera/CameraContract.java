@@ -29,6 +29,8 @@ public interface CameraContract {
         void activateProgressBar(int happinessFromButton);
 
         void  hideProgressBar();
+
+        void hideButtons();
     }
 
 
@@ -45,5 +47,11 @@ public interface CameraContract {
         Completable saveNewRecord(FileUploadEvent fileUploadEvent);
 
         Single<SparseArray<String>> getCredentials();
+
+        Completable sendEmail(FileUploadEvent fileUploadEvent);
+
+        Single<FileUploadEvent> decryptCredentials(FileUploadEvent fileUploadEvent);
+
+        void detach();
     }
 }

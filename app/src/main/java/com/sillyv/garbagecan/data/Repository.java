@@ -1,11 +1,13 @@
 package com.sillyv.garbagecan.data;
 
-import android.content.Context;
+import android.app.Activity;
 import android.util.SparseArray;
 
 import com.sillyv.garbagecan.core.BaseContract;
 import com.sillyv.garbagecan.data.credentials.CredentialsManager;
 import com.sillyv.garbagecan.data.database.DataBaseRepo;
+import com.sillyv.garbagecan.data.email.EmailRepo;
+import com.sillyv.garbagecan.data.encryption.EncryptionRepo;
 import com.sillyv.garbagecan.data.images.ImageRepo;
 import com.sillyv.garbagecan.data.location.LatLonModel;
 import com.sillyv.garbagecan.data.location.LocationRepo;
@@ -17,7 +19,6 @@ import io.reactivex.Single;
 
 /**
  * Created by Vasili on 9/15/2017.
- *
  */
 
 public class Repository
@@ -28,12 +29,14 @@ public class Repository
     private RepositoryContract.Image imageUploader = new ImageRepo();
     private RepositoryContract.Database database = new DataBaseRepo();
     private RepositoryContract.Credentials credentialsRepo = new CredentialsManager();
+    private RepositoryContract.Email emailRepo = new EmailRepo();
+    private RepositoryContract.Decryption encryptionRepo = new EncryptionRepo();
 
-    private Repository(Context context) {
+    private Repository(Activity context) {
         locationManager = LocationRepo.getInstance(context);
     }
 
-    public static Repository getInstance(Context context) {
+    public static Repository getInstance(Activity context) {
         if (instance == null) {
             instance = new Repository(context);
         }
@@ -58,5 +61,22 @@ public class Repository
     @Override
     public Single<SparseArray<String>> getCredentials() {
         return credentialsRepo.getCredentialsRx();
+    }
+
+    @Override
+    public Completable sendEmail(FileUploadEvent fileUploadEvent) {
+        return emailRepo.sendEmailRx(fileUploadEvent);
+    }
+
+    @Override
+    public Single<FileUploadEvent> decryptCredentials(FileUploadEvent fileUploadEvent) {
+        return encryptionRepo.massDecryptRx(fileUploadEvent);
+    }
+
+    @Override
+    public void detach() {
+        locationManager.detach();
+        locationManager = null;
+        instance = null;
     }
 }

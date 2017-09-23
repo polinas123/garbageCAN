@@ -24,9 +24,19 @@ public interface RepositoryContract {
 
     interface Location {
         Single<LatLonModel> getLocation();
+
+        void detach();
     }
 
     interface Credentials {
         Single<SparseArray<String>> getCredentialsRx();
+    }
+
+     interface Email {
+         Completable sendEmailRx(FileUploadEvent fileUploadEvent);
+     }
+
+    public interface Decryption {
+        Single<FileUploadEvent> massDecryptRx(FileUploadEvent fileUploadEvent);
     }
 }

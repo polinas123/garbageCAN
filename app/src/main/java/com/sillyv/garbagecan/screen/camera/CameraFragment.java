@@ -1,12 +1,9 @@
 package com.sillyv.garbagecan.screen.camera;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,6 +18,8 @@ import com.sillyv.garbagecan.util.camera.Camera2BasicFragment;
 import com.sillyv.garbagecan.util.camera.CameraOldBasicFragment;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import io.reactivex.Observable;
@@ -74,6 +73,7 @@ public abstract class CameraFragment
     private CameraContract.Presenter presenter;
     private ProgressBar progressBar;
     private PublishSubject<FileUploadEvent> subject = PublishSubject.create();
+    private List<View> buttons;
 
     public static CameraFragment newInstance(
             double minPreviewRatio,
@@ -133,6 +133,10 @@ public abstract class CameraFragment
                     }
                 });
         progressBar = view.findViewById(R.id.progress_bar);
+        buttons = new ArrayList<>();
+        buttons.add(view.findViewById(R.id.meh_button));
+        buttons.add(view.findViewById(R.id.happy_button));
+        buttons.add(view.findViewById(R.id.sad_button));
 
     }
 
@@ -189,7 +193,7 @@ public abstract class CameraFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new CameraPresenter(this, Repository.getInstance(getContext()));
+        presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
         Bundle args = getArguments();
         filePrefix = (args != null) ? args.getString(PREFIX_ARG) : "";
         useCameraBackFacing = args == null || args.getBoolean(BACK_CAMERA_ARG);
@@ -220,13 +224,20 @@ public abstract class CameraFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.thank_you_message)
                 .setPositiveButton(R.string.restart, (dialog, id) -> {
-
+                    displayButtons();
                 })
                 .setNegativeButton(R.string.exit, (dialog, id) -> getActivity().finish());
         // Create the AlertDialog object and return it
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
+    }
+
+    private void displayButtons() {
+        for (View button : buttons) {
+            button.setVisibility(View.VISIBLE);
+
+        }
     }
 
     @Override
@@ -242,6 +253,13 @@ public abstract class CameraFragment
     @Override
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideButtons() {
+        for (View button : buttons) {
+            button.setVisibility(View.GONE);
+        }
     }
 
 
