@@ -15,9 +15,9 @@ public class EncryptionRepoTest {
     private static final String SENDER_VALUE = "aaa";
     private static final String SENDER_PASSWORD_VALUE = "aaa";
     private static final String RECIPIENT_VALUE = "aaa";
-    private static final String PASSWORD = "MakeAmericaGreatAgain1234";
-    private static final String RECIPIENT = "JerusalemMunicipality@jerusalem.muni.il";
-    private static final String SENDER = "NirBarkat@jerusalem.muni.il";
+    private static final String PASSWORD = "aaa";
+    private static final String RECIPIENT = "aaa";
+    private static final String SENDER = "aaa";
 
 
     @Test

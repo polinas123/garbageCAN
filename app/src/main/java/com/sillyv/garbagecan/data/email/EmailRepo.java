@@ -18,6 +18,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -71,14 +72,14 @@ public class EmailRepo
         message.setFrom(new InternetAddress(username));
 
         // Set To: header field of the header.
-//        message.setRecipients(Message.RecipientType.TO,
-//                InternetAddress.parse(credentialsMap.get(CredentialsManager.RECIPIENT)));
+        message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(credentialsMap.get(CredentialsManager.RECIPIENT)));
 
 
         // TODO: 9/23/2017 Switch back to real recipient
 
-        message.setRecipients(Message.RecipientType.TO,
-                InternetAddress.parse("vasili.fedotov@gmail.com"));
+//        message.setRecipients(Message.RecipientType.TO,
+//                InternetAddress.parse("vasili.fedotov@gmail.com"));
 
         // Set Subject: header field
         message.setSubject(MESSAGE_SUBJECT);
@@ -111,7 +112,7 @@ public class EmailRepo
         message.setContent(multipart);
 
 //         Send message
-//        Transport.send(message);
+        Transport.send(message);
 // TODO: 9/23/2017 Send Message, when out of debug
 
 
