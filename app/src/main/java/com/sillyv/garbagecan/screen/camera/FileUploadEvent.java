@@ -23,7 +23,7 @@ public class FileUploadEvent {
         this.score = score;
     }
 
-    int getScore() {
+    public int getScore() {
         return score;
     }
 

@@ -76,11 +76,6 @@ public class EmailRepo
                 InternetAddress.parse(credentialsMap.get(CredentialsManager.RECIPIENT)));
 
 
-        // TODO: 9/23/2017 Switch back to real recipient
-
-//        message.setRecipients(Message.RecipientType.TO,
-//                InternetAddress.parse("vasili.fedotov@gmail.com"));
-
         // Set Subject: header field
         message.setSubject(MESSAGE_SUBJECT);
 
@@ -90,7 +85,8 @@ public class EmailRepo
         // Now set the actual message
         String message_body = "Lattitude: " + fileUploadEvent.getLatitude() + "\n" +
                 "Longitude: " + fileUploadEvent.getLongitude() + "\n" +
-                "Time: " + new Date().toString();
+                "Time: " + new Date().toString() + "\n" +
+                "Score: " + fileUploadEvent.getScore();
 
         messageBodyPart.setText(message_body);
 
@@ -113,7 +109,6 @@ public class EmailRepo
 
 //         Send message
         Transport.send(message);
-// TODO: 9/23/2017 Send Message, when out of debug
 
 
     }

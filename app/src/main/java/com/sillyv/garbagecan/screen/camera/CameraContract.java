@@ -5,6 +5,8 @@ import android.util.SparseArray;
 import com.sillyv.garbagecan.core.BaseContract;
 import com.sillyv.garbagecan.data.location.LatLonModel;
 
+import java.io.File;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -26,7 +28,7 @@ public interface CameraContract {
 
         void displayThankYouDialog();
 
-        void activateProgressBar(int happinessFromButton);
+        void notifyImageBeingSent(int happinessFromButton, File file);
 
         void  hideProgressBar();
 
@@ -37,6 +39,9 @@ public interface CameraContract {
     interface Presenter extends BaseContract.Presenter {
 
 
+        void subscribeToEvents();
+
+        void notifyPhotoSaved(FileUploadEvent fileUploadEvent);
     }
 
     interface Repo {

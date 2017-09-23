@@ -16,6 +16,7 @@ import com.sillyv.garbagecan.util.ButtonIDHappinessMapper;
 import com.sillyv.garbagecan.util.FilesUtils;
 import com.sillyv.garbagecan.util.camera.Camera2BasicFragment;
 import com.sillyv.garbagecan.util.camera.CameraOldBasicFragment;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public abstract class CameraFragment
     private static final String BACK_CAMERA_ARG = "BACK_CAMERA";
     private static final String MINIMUM_RATIO = "MINIMUM_PREVIEW_RATIO";
     private static final String MAXIMUM_RATIO = "MAXIMUM_PREVIEW_RATIO";
+    private static int width;
+    private static int height;
     /*
      * This will be prefixed to the filenames of the captured photos, located in the external storage
      * (not the public one), with the date and time, in the jpeg format
@@ -74,10 +77,13 @@ public abstract class CameraFragment
     private ProgressBar progressBar;
     private PublishSubject<FileUploadEvent> subject = PublishSubject.create();
     private List<View> buttons;
+    private ImageView takenImage;
 
     public static CameraFragment newInstance(
             double minPreviewRatio,
-            double maxPreviewRatio) {
+            double maxPreviewRatio, int width, int height) {
+        CameraFragment.width = width;
+        CameraFragment.height = height;
         CameraFragment newFragment;
         if (Build.VERSION.SDK_INT < 21) { //old Camera api
             newFragment = CameraOldBasicFragment.newInstance();
@@ -112,6 +118,10 @@ public abstract class CameraFragment
     }
 
     protected void bindViewElements(View view) {
+        presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
+
+        presenter.subscribeToEvents();
+
         buttonsObservable = getClicks(view, R.id.meh_button)
                 .mergeWith(getClicks(view, R.id.happy_button))
                 .mergeWith(getClicks(view, R.id.sad_button))
@@ -132,6 +142,7 @@ public abstract class CameraFragment
 
                     }
                 });
+        takenImage = view.findViewById(R.id.taken_image_view);
         progressBar = view.findViewById(R.id.progress_bar);
         buttons = new ArrayList<>();
         buttons.add(view.findViewById(R.id.meh_button));
@@ -193,7 +204,6 @@ public abstract class CameraFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
         Bundle args = getArguments();
         filePrefix = (args != null) ? args.getString(PREFIX_ARG) : "";
         useCameraBackFacing = args == null || args.getBoolean(BACK_CAMERA_ARG);
@@ -211,7 +221,8 @@ public abstract class CameraFragment
     protected abstract void initializeCameraPreview();
 
     protected void notifyPhotoSaved() {
-        subject.onNext(new FileUploadEvent(mFile, score));
+        presenter.notifyPhotoSaved(new FileUploadEvent(mFile, score));
+//        subject.onNext(new FileUploadEvent(mFile, score));
     }
 
     @Override
@@ -221,15 +232,19 @@ public abstract class CameraFragment
 
     @Override
     public void displayThankYouDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.thank_you_message)
-                .setPositiveButton(R.string.restart, (dialog, id) -> {
-                    displayButtons();
-                })
-                .setNegativeButton(R.string.exit, (dialog, id) -> getActivity().finish());
-        // Create the AlertDialog object and return it
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.thank_you_message)
+                    .setPositiveButton(R.string.restart, (dialog, id) -> {
+                        displayButtons();
+                    })
+                    .setNegativeButton(R.string.exit, (dialog, id) -> getActivity().finish());
+            // Create the AlertDialog object and return it
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -241,8 +256,14 @@ public abstract class CameraFragment
     }
 
     @Override
-    public void activateProgressBar(int happinessFromButton) {
+    public void notifyImageBeingSent(int happinessFromButton, File file) {
         progressBar.setVisibility(View.VISIBLE);
+        takenImage.setVisibility(View.VISIBLE);
+        Picasso.with(takenImage.getContext())
+                .load(file)
+                .resize(CameraFragment.width, CameraFragment.height)
+                .centerCrop()
+                .into(takenImage);
 
         progressBar.getIndeterminateDrawable()
                 .setColorFilter(happinessFromButton, android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -253,6 +274,7 @@ public abstract class CameraFragment
     @Override
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
+        takenImage.setVisibility(View.GONE);
     }
 
     @Override
@@ -260,13 +282,6 @@ public abstract class CameraFragment
         for (View button : buttons) {
             button.setVisibility(View.GONE);
         }
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
     }
 
 }

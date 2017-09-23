@@ -40,6 +40,9 @@ public class Repository
         if (instance == null) {
             instance = new Repository(context);
         }
+        if (instance.locationManager == null) {
+            instance.locationManager = LocationRepo.getInstance(context);
+        }
         return instance;
     }
 
@@ -75,8 +78,9 @@ public class Repository
 
     @Override
     public void detach() {
-        locationManager.detach();
-        locationManager = null;
-        instance = null;
+        if (locationManager != null) {
+            locationManager.detach();
+            locationManager = null;
+        }
     }
 }

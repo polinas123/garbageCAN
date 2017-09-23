@@ -8,6 +8,7 @@ import com.sillyv.garbagecan.core.BasePresenter;
 import com.sillyv.garbagecan.data.location.LatLonModel;
 import com.sillyv.garbagecan.util.HappinessColorMapper;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
@@ -20,23 +21,34 @@ import io.reactivex.schedulers.Schedulers;
 class CameraPresenter
         extends BasePresenter
         implements CameraContract.Presenter {
+
+
     private static final String TAG = "CameraPresenter";
     private CameraContract.View view;
     private CameraContract.Repo repo;
 
-    CameraPresenter(CameraContract.View view,
-                    CameraContract.Repo repo) {
+    public CameraPresenter(CameraContract.View view,
+                            CameraContract.Repo repo) {
         this.view = view;
         this.repo = repo;
-        subscribeToEvents();
     }
 
-    private void subscribeToEvents() {
-        view.getSavedFile()
-                .doOnSubscribe(this::registerDisposable)
+
+
+
+    @Override
+    public void subscribeToEvents() {
+//        view.getSavedFile()
+
+    }
+
+    @Override
+    public void notifyPhotoSaved(FileUploadEvent uploadEvent) {
+        Observable.just(uploadEvent).doOnSubscribe(this::registerDisposable)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(fileUploadEvent -> view.activateProgressBar(HappinessColorMapper
-                        .getHappinessFromButton(fileUploadEvent.getScore())))
+                .doOnNext(fileUploadEvent -> view.notifyImageBeingSent(HappinessColorMapper
+                                .getHappinessFromButton(fileUploadEvent.getScore()),
+                        fileUploadEvent.getFile()))
                 .doOnNext(fileUploadEvent -> view.hideButtons())
                 .observeOn(Schedulers.io())
                 .flatMapSingle(fileUploadEvent -> repo.getLocation()

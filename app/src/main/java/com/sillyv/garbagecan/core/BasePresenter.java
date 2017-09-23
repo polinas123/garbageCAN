@@ -21,7 +21,6 @@ public abstract class BasePresenter
     @Override
     public void detach() {
         disposables.clear();
-        disposables.dispose();
     }
 
 }
