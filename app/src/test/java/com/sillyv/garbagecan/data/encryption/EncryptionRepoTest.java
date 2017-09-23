@@ -22,7 +22,7 @@ public class EncryptionRepoTest {
 
     @Test
     public void encryptDecript() throws Exception {
-        String str = "Vasili.fedotov@g,ail.com";
+        String str = "aaa";
 
         System.out.println(SENDER_VALUE + ": " + encrypt(SENDER_VALUE, SENDER));
         System.out.println(SENDER_PASSWORD_VALUE + ": " + encrypt(SENDER_PASSWORD_VALUE, PASSWORD));
