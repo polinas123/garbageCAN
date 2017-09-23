@@ -2,9 +2,6 @@ package com.sillyv.garbagecan.core;
 
 import com.sillyv.garbagecan.screen.camera.CameraContract;
 
-import java.util.Map;
-
-import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -22,5 +19,6 @@ public interface BaseContract {
     }
 
     interface Repo extends CameraContract.Repo {
+        void detach();
     }
 }

@@ -7,4 +7,5 @@ package com.sillyv.garbagecan.data.location
 
 class LatLonModel(var latitude: Double, var longitude: Double) {
 
+
 }

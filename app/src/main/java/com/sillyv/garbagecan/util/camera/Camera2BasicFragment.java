@@ -76,7 +76,8 @@ import timber.log.Timber;
 
 @SuppressWarnings("SuspiciousNameCombination")
 @TargetApi(21)
-public class Camera2BasicFragment extends CameraFragment {
+public class Camera2BasicFragment
+        extends CameraFragment {
 
     public static final String CAPTURING_WHILE_CONFIGURATION_NOT_SET_ERROR = "Trying to take a picture before the camera is configured (mCaptureSession == null)";
     public static final long EXPOSURE_TIME_DEFAULT = 1000000000L / 30;
@@ -375,12 +376,16 @@ public class Camera2BasicFragment extends CameraFragment {
             new TextureView.SurfaceTextureListener() {
 
                 @Override
-                public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
+                public void onSurfaceTextureAvailable(SurfaceTexture texture,
+                                                      int width,
+                                                      int height) {
                     openCamera(width, height);
                 }
 
                 @Override
-                public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
+                public void onSurfaceTextureSizeChanged(SurfaceTexture texture,
+                                                        int width,
+                                                        int height) {
                     configureTransform(width, height);
                 }
 
@@ -490,7 +495,7 @@ public class Camera2BasicFragment extends CameraFragment {
      */
     @Override
     public void takePicture() {
-        if (mCaptureSession == null){
+        if (mCaptureSession == null) {
             Timber.e(CAPTURING_WHILE_CONFIGURATION_NOT_SET_ERROR);
             return;
         }
@@ -507,7 +512,8 @@ public class Camera2BasicFragment extends CameraFragment {
 
         captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, EXPOSURE_TIME_DEFAULT);
         captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
-        captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+        captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
         captureBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
 //        captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 //        captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
@@ -517,7 +523,8 @@ public class Camera2BasicFragment extends CameraFragment {
     @Override
     public void turnFlashOff() {
 //        captureBuilder.set(CaptureRequest.FLASH_MODE,CameraMetadata.FLASH_MODE_OFF);
-        captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+        captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
         captureBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
 
     }
@@ -604,7 +611,8 @@ public class Camera2BasicFragment extends CameraFragment {
                                 new CompareSizesByArea(minimumPreviewRatio, maximumPreviewRatio));
                 mImageReader = ImageReader.newInstance(
                         largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/ 2);
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
+                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener,
+                        mBackgroundHandler);
 
                 // Find out if we need to swap dimension to get the preview size relative to sensor
                 // coordinate.
@@ -778,7 +786,8 @@ public class Camera2BasicFragment extends CameraFragment {
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (mFlashSupported) {
-            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
         }
     }
 
@@ -792,7 +801,9 @@ public class Camera2BasicFragment extends CameraFragment {
                     CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
             // Tell #mCaptureCallback to wait for the lock.
             mState = STATE_WAITING_LOCK;
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            mCaptureSession.capture(mPreviewRequestBuilder.build(),
+                    mCaptureCallback,
+                    mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -802,6 +813,8 @@ public class Camera2BasicFragment extends CameraFragment {
      * Creates a new {@link CameraCaptureSession} for camera preview.
      */
     private void createCameraPreviewSession() {
+
+
         try {
             SurfaceTexture texture = mTextureView.getSurfaceTexture();
             assert texture != null;
@@ -811,12 +824,17 @@ public class Camera2BasicFragment extends CameraFragment {
 
             // This is the output Surface we need to start preview.
             Surface surface = new Surface(texture);
-
+            if (mCameraDevice == null) {
+                return;
+            }
             // We set up a CaptureRequest.Builder with the output Surface.
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
+            if (mCameraDevice == null) {
+                return;
+            }
             mCameraDevice.createCaptureSession(
                     Arrays.asList(surface, mImageReader.getSurface()),
                     new CameraCaptureSession.StateCallback() {
@@ -853,6 +871,7 @@ public class Camera2BasicFragment extends CameraFragment {
                         }
                     },
                     null);
+
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -870,7 +889,9 @@ public class Camera2BasicFragment extends CameraFragment {
                     CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
             // Tell #mCaptureCallback to wait for the precapture sequence to be set.
             mState = STATE_WAITING_PRECAPTURE;
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            mCaptureSession.capture(mPreviewRequestBuilder.build(),
+                    mCaptureCallback,
+                    mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -915,7 +936,8 @@ public class Camera2BasicFragment extends CameraFragment {
                 captureBuilder.addTarget(mImageReader.getSurface());
 
                 // Use the same AE and AF modes as the preview.
-                captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                 setAutoFlashCapture();
 
                 // Orientation
@@ -926,28 +948,37 @@ public class Camera2BasicFragment extends CameraFragment {
                         new CameraCaptureSession.CaptureCallback() {
 
                             @Override
-                            public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest
-                                    request, long timestamp, long frameNumber) {
+                            public void onCaptureStarted(@NonNull CameraCaptureSession session,
+                                                         @NonNull CaptureRequest
+                                                                 request,
+                                                         long timestamp,
+                                                         long frameNumber) {
                                 super.onCaptureStarted(session, request, timestamp, frameNumber);
                                 Timber.d("capture started");
                             }
 
                             @Override
-                            public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest
-                                    request, @NonNull CaptureFailure failure) {
+                            public void onCaptureFailed(@NonNull CameraCaptureSession session,
+                                                        @NonNull CaptureRequest
+                                                                request,
+                                                        @NonNull CaptureFailure failure) {
                                 super.onCaptureFailed(session, request, failure);
                                 Timber.d("capture failed");
                             }
 
                             @Override
-                            public void onCaptureSequenceAborted(@NonNull CameraCaptureSession session, int sequenceId) {
+                            public void onCaptureSequenceAborted(@NonNull CameraCaptureSession session,
+                                                                 int sequenceId) {
                                 super.onCaptureSequenceAborted(session, sequenceId);
                                 Timber.d("capture aborted");
                             }
 
                             @Override
-                            public void onCaptureBufferLost(@NonNull CameraCaptureSession session, @NonNull
-                                    CaptureRequest request, @NonNull Surface target, long frameNumber) {
+                            public void onCaptureBufferLost(@NonNull CameraCaptureSession session,
+                                                            @NonNull
+                                                                    CaptureRequest request,
+                                                            @NonNull Surface target,
+                                                            long frameNumber) {
                                 super.onCaptureBufferLost(session, request, target, frameNumber);
                                 Timber.d("capture buffer lost");
                             }
@@ -965,14 +996,17 @@ public class Camera2BasicFragment extends CameraFragment {
 
 
                             @Override
-                            public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull
-                                    CaptureRequest request, @NonNull CaptureResult partialResult) {
+                            public void onCaptureProgressed(@NonNull CameraCaptureSession session,
+                                                            @NonNull
+                                                                    CaptureRequest request,
+                                                            @NonNull CaptureResult partialResult) {
                                 super.onCaptureProgressed(session, request, partialResult);
                                 Timber.d("capture progressed");
                             }
 
                             @Override
-                            public void onCaptureSequenceCompleted(@NonNull CameraCaptureSession session, int sequenceId,
+                            public void onCaptureSequenceCompleted(@NonNull CameraCaptureSession session,
+                                                                   int sequenceId,
                                                                    long frameNumber) {
                                 super.onCaptureSequenceCompleted(session, sequenceId, frameNumber);
                                 Timber.d("capture completed");
@@ -1020,10 +1054,14 @@ public class Camera2BasicFragment extends CameraFragment {
             mPreviewRequestBuilder.set(
                     CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
             setAutoFlash(mPreviewRequestBuilder);
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            mCaptureSession.capture(mPreviewRequestBuilder.build(),
+                    mCaptureCallback,
+                    mBackgroundHandler);
             // After this, the camera will go back to the normal state of preview.
             mState = STATE_PREVIEW;
-            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+            mCaptureSession.setRepeatingRequest(mPreviewRequest,
+                    mCaptureCallback,
+                    mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -1039,7 +1077,8 @@ public class Camera2BasicFragment extends CameraFragment {
     /**
      * Compares two {@code Size}s based on their areas.
      */
-    static class CompareSizesByArea implements Comparator<Size> {
+    static class CompareSizesByArea
+            implements Comparator<Size> {
 
         private double minimumRatio;
 
@@ -1082,7 +1121,8 @@ public class Camera2BasicFragment extends CameraFragment {
     /**
      * Saves a JPEG {@link Image} into the specified {@link File}.
      */
-    private class ImageSaver implements Runnable {
+    private class ImageSaver
+            implements Runnable {
 
         /**
          * The JPEG image

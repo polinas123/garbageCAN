@@ -33,18 +33,19 @@ class CameraPresenter
 
     private void subscribeToEvents() {
         view.getSavedFile()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(cameraEventModel -> view.activateProgressBar(HappinessColorMapper
-                        .getHappinessFromButton(cameraEventModel.getScore())))
                 .doOnSubscribe(this::registerDisposable)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(fileUploadEvent -> view.activateProgressBar(HappinessColorMapper
+                        .getHappinessFromButton(fileUploadEvent.getScore())))
+                .doOnNext(fileUploadEvent -> view.hideButtons())
                 .observeOn(Schedulers.io())
                 .flatMapSingle(fileUploadEvent -> repo.getLocation()
                         .map(CameraPresenter.this.injectLocationIntoUploadModel(fileUploadEvent)))
                 .flatMapSingle(fileUploadEvent -> repo.getCredentials()
                         .map(CameraPresenter.this.injectCredentialsIntoUploadModel(fileUploadEvent)))
-                .flatMapSingle(fileUploadEvent -> repo.uploadPhoto(fileUploadEvent)
-                        .map(injectRemotePathIntoUploadModel(fileUploadEvent)))
-                .flatMapSingle(fileUploadEvent -> repo.saveNewRecord(fileUploadEvent)
+                .flatMapSingle(fileUploadEvent -> repo.decryptCredentials(fileUploadEvent))
+                .observeOn(Schedulers.io())
+                .flatMapSingle(fileUploadEvent -> repo.sendEmail(fileUploadEvent)
                         .toSingle(() -> fileUploadEvent))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<FileUploadEvent>() {
@@ -95,5 +96,12 @@ class CameraPresenter
             cameraEventModel.setLongitude(latLonModel.getLongitude());
             return cameraEventModel;
         };
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        repo.detach();
+
     }
 }
