@@ -99,7 +99,7 @@ public class CameraOldBasicFragment extends CameraFragment
                     FileOutputStream fos = new FileOutputStream(mFile);
                     fos.write(data);
                     fos.close();
-                    notifyPhotoSaved();
+                    notifyPhotoSaved(); //rtew
                     Log.d(TAG, "saved:" + mFile.toString());
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, "File not found: " + e.getMessage());

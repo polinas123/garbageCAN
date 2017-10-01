@@ -1,5 +1,6 @@
 package com.sillyv.garbagecan.screen.camera;
 
+import android.content.Context;
 import android.util.SparseArray;
 
 import com.sillyv.garbagecan.core.BaseContract;
@@ -41,7 +42,7 @@ public interface CameraContract {
 
         void subscribeToEvents();
 
-        void notifyPhotoSaved(FileUploadEvent fileUploadEvent);
+        void notifyPhotoSaved(Context context, FileUploadEvent fileUploadEvent);
     }
 
     interface Repo {
@@ -53,7 +54,7 @@ public interface CameraContract {
 
         Single<SparseArray<String>> getCredentials();
 
-        Completable sendEmail(FileUploadEvent fileUploadEvent);
+        Completable sendEmail(Context context, FileUploadEvent fileUploadEvent);
 
         Single<FileUploadEvent> decryptCredentials(FileUploadEvent fileUploadEvent);
 

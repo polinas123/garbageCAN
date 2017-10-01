@@ -18,9 +18,22 @@ public class FileUploadEvent {
     private SparseArray<String> credentialsMap;
 
 
-    FileUploadEvent(File file, int score) {
+    public FileUploadEvent(File file, int score) {
         this.file = file;
         this.score = score;
+    }
+
+    private FileUploadEvent(Builder builder) {
+        file = builder.file;
+        score = builder.score;
+        setLongitude(builder.longitude);
+        setLatitude(builder.latitude);
+        setUploadedFilePath(builder.uploadedFilePath);
+        setCredentialsMap(builder.credentialsMap);
+    }
+
+    public static Builder newBuilder(File file, int score) {
+        return new Builder(file, score);
     }
 
     public int getScore() {
@@ -35,7 +48,7 @@ public class FileUploadEvent {
         return longitude;
     }
 
-    void setLongitude(double longitude) {
+    public  void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -43,7 +56,7 @@ public class FileUploadEvent {
         return latitude;
     }
 
-    void setLatitude(double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
@@ -51,15 +64,54 @@ public class FileUploadEvent {
         return uploadedFilePath;
     }
 
-    void setUploadedFilePath(String uploadedFilePath) {
+    public  void setUploadedFilePath(String uploadedFilePath) {
         this.uploadedFilePath = uploadedFilePath;
     }
 
-    void setCredentialsMap(SparseArray<String> credentialsMap) {
+    public void setCredentialsMap(SparseArray<String> credentialsMap) {
         this.credentialsMap = credentialsMap;
     }
 
     public SparseArray<String> getCredentialsMap() {
         return credentialsMap;
+    }
+
+
+    public static final class Builder {
+        private final File file;
+        private final int score;
+        private double longitude;
+        private double latitude;
+        private String uploadedFilePath;
+        private SparseArray<String> credentialsMap;
+
+        private Builder(File file, int score) {
+            this.file = file;
+            this.score = score;
+        }
+
+        public Builder withLongitude(double longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public Builder withLatitude(double latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder withUploadedFilePath(String uploadedFilePath) {
+            this.uploadedFilePath = uploadedFilePath;
+            return this;
+        }
+
+        public Builder withCredentialsMap(SparseArray<String> credentialsMap) {
+            this.credentialsMap = credentialsMap;
+            return this;
+        }
+
+        public FileUploadEvent build() {
+            return new FileUploadEvent(this);
+        }
     }
 }

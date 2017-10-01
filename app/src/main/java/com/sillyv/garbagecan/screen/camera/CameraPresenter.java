@@ -1,5 +1,6 @@
 package com.sillyv.garbagecan.screen.camera;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
@@ -43,7 +44,7 @@ class CameraPresenter
     }
 
     @Override
-    public void notifyPhotoSaved(FileUploadEvent uploadEvent) {
+    public void notifyPhotoSaved(Context context, FileUploadEvent uploadEvent) {
         Observable.just(uploadEvent).doOnSubscribe(this::registerDisposable)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(fileUploadEvent -> view.notifyImageBeingSent(HappinessColorMapper
@@ -57,7 +58,7 @@ class CameraPresenter
                         .map(CameraPresenter.this.injectCredentialsIntoUploadModel(fileUploadEvent)))
                 .flatMapSingle(fileUploadEvent -> repo.decryptCredentials(fileUploadEvent))
                 .observeOn(Schedulers.io())
-                .flatMapSingle(fileUploadEvent -> repo.sendEmail(fileUploadEvent)
+                .flatMapSingle(fileUploadEvent -> repo.sendEmail(context, fileUploadEvent)
                         .toSingle(() -> fileUploadEvent))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<FileUploadEvent>() {

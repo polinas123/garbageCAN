@@ -1,6 +1,7 @@
 package com.sillyv.garbagecan.data;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.SparseArray;
 
 import com.sillyv.garbagecan.core.BaseContract;
@@ -67,8 +68,8 @@ public class Repository
     }
 
     @Override
-    public Completable sendEmail(FileUploadEvent fileUploadEvent) {
-        return emailRepo.sendEmailRx(fileUploadEvent);
+    public Completable sendEmail(Context context, FileUploadEvent fileUploadEvent) {
+        return emailRepo.sendEmailViaIntentServiceRx(context,fileUploadEvent);
     }
 
     @Override

@@ -221,7 +221,7 @@ public abstract class CameraFragment
     protected abstract void initializeCameraPreview();
 
     protected void notifyPhotoSaved() {
-        presenter.notifyPhotoSaved(new FileUploadEvent(mFile, score));
+        presenter.notifyPhotoSaved(getContext(), new FileUploadEvent(mFile, score));
 //        subject.onNext(new FileUploadEvent(mFile, score));
     }
 

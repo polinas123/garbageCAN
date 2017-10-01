@@ -1,5 +1,6 @@
 package com.sillyv.garbagecan.data;
 
+import android.content.Context;
 import android.util.SparseArray;
 
 import com.sillyv.garbagecan.data.location.LatLonModel;
@@ -34,6 +35,9 @@ public interface RepositoryContract {
 
      interface Email {
          Completable sendEmailRx(FileUploadEvent fileUploadEvent);
+
+         Completable sendEmailViaIntentServiceRx(Context context,
+                                                 FileUploadEvent fileUploadEvent);
      }
 
     public interface Decryption {
