@@ -5,6 +5,8 @@ import android.util.Log;
 import com.sillyv.garbagecan.data.RepositoryContract;
 import com.sillyv.garbagecan.screen.camera.FileUploadEvent;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 
 /**
@@ -14,6 +16,10 @@ import io.reactivex.Completable;
 
 public class DataBaseRepo implements RepositoryContract.Database{
     private static final String TAG = "DataBaseRepo";
+
+    @Inject
+    public DataBaseRepo() {
+    }
 
     public Completable saveRecord(FileUploadEvent fileUploadEvent) {
         Log.d(TAG, "saveRecord: " + fileUploadEvent.getUploadedFilePath());

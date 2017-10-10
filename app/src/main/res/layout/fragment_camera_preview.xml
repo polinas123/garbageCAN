@@ -16,12 +16,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ImageView
-        android:background="#000000"
-        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <ImageView
         android:id="@+id/taken_image_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#000000"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +56,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.design.widget.FloatingActionButton
+    <Button
         android:id="@+id/meh_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,32 +64,29 @@
         android:scaleType="center"
         android:src="@drawable/ic_meh_yellow"
         android:theme="@style/meh_fab"
-        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <android.support.design.widget.FloatingActionButton
+    <Button
         android:id="@+id/happy_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="center"
         android:src="@drawable/ic_happy_green"
         android:theme="@style/happy_fab"
-        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="@+id/meh_button"
         app:layout_constraintEnd_toStartOf="@+id/meh_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/meh_button" />
 
-    <android.support.design.widget.FloatingActionButton
+    <Button
         android:id="@+id/sad_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="center"
         android:src="@drawable/ic_sad_red"
         android:theme="@style/sad_fab"
-        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="@+id/meh_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/meh_button"

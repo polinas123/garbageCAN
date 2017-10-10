@@ -15,6 +15,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.inject.Inject;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -48,6 +49,9 @@ public class EmailRepo
     private static final String MAIL_SMTP_AUTH_VALUE = "true";
     private static final String MESSAGE_SUBJECT = "Let me know how this should be formatted";
 
+    @Inject
+    public EmailRepo() {
+    }
 
     public void sendEmail(FileUploadEvent fileUploadEvent) throws MessagingException {
 

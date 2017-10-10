@@ -9,9 +9,9 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import io.reactivex.Single;
 
@@ -23,6 +23,9 @@ import io.reactivex.Single;
 public class ImageRepo
         implements RepositoryContract.Image {
 
+    @Inject
+    public ImageRepo() {
+    }
 
     public Single<String> uploadPhotoRx(FileUploadEvent fileUploadEvent) {
         return Single.fromCallable(() -> uploadPhoto(fileUploadEvent));

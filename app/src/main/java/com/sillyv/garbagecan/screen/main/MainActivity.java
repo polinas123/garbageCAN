@@ -17,11 +17,8 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         MainContract.Presenter presenter = new MainPresenter(this);
         presenter.init(this);
-
-
     }
 
     public void displayCamera() {

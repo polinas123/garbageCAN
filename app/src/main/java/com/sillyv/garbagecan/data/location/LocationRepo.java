@@ -26,8 +26,8 @@ public class LocationRepo
         implements RepositoryContract.Location {
 
 
-    public static final double NO_PERMISSION_LOCATION = -20d;
-    public static final double NO_LOCATION_LOCATION = -10d;
+    private static final double NO_PERMISSION_LOCATION = -20d;
+    private static final double NO_LOCATION_LOCATION = -10d;
     private static LocationRepo instance;
     private final RxLocation rxLocation;
     private final LocationRequest locationRequest;

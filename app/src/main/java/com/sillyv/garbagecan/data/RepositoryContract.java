@@ -11,16 +11,23 @@ import io.reactivex.Single;
 
 /**
  * Created by Vasili on 9/15/2017.
- *
  */
 
 public interface RepositoryContract {
-    interface Database {
-        Completable saveRecord(FileUploadEvent fileUploadEvent);
-    }
 
     interface Image {
         Single<String> uploadPhotoRx(FileUploadEvent fileUploadEvent);
+    }
+
+    interface Email {
+        Completable sendEmailRx(FileUploadEvent fileUploadEvent);
+
+        Completable sendEmailViaIntentServiceRx(Context context,
+                                                FileUploadEvent fileUploadEvent);
+    }
+
+    interface Database {
+        Completable saveRecord(FileUploadEvent fileUploadEvent);
     }
 
     interface Location {
@@ -33,14 +40,7 @@ public interface RepositoryContract {
         Single<SparseArray<String>> getCredentialsRx();
     }
 
-     interface Email {
-         Completable sendEmailRx(FileUploadEvent fileUploadEvent);
-
-         Completable sendEmailViaIntentServiceRx(Context context,
-                                                 FileUploadEvent fileUploadEvent);
-     }
-
-    public interface Decryption {
+    interface Decryption {
         Single<FileUploadEvent> massDecryptRx(FileUploadEvent fileUploadEvent);
     }
 }

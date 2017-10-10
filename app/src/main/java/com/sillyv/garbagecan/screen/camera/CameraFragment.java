@@ -119,9 +119,7 @@ public abstract class CameraFragment
 
     protected void bindViewElements(View view) {
         presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
-
         presenter.subscribeToEvents();
-
         buttonsObservable = getClicks(view, R.id.meh_button)
                 .mergeWith(getClicks(view, R.id.happy_button))
                 .mergeWith(getClicks(view, R.id.sad_button))
