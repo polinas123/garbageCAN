@@ -12,6 +12,17 @@
     <string name="thank_you_message">Thank you</string>
     <string name="restart">restart</string>
     <string name="exit">exit</string>
+    <string name="preview_of_taken_photo">Preview of taken photo</string>
+    <string name="settings_button">Settings Button</string>
+
+    <!--Settings fragment-->
+    <string name="wifi_only">Only upload photos over WiFi</string>
+    <string name="charge_only">Only upload photos while charging</string>
+    <string name="usage_reports">Send us anonymous usage reports to help us improve our app</string>
+    <string name="upload_question_title">When should I upload photos?</string>
+    <string name="other_title">Other:</string>
+    <string name="show_upload_history">Show upload History</string>
+    <string name="show_history_arrow_button">show_history_arrow_button</string>
 
 
 </resources>

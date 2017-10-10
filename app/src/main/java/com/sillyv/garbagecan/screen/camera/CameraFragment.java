@@ -29,6 +29,7 @@ import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by Vasili on 09/11/2016.
+ *
  */
 public abstract class CameraFragment
         extends Fragment
@@ -70,7 +71,7 @@ public abstract class CameraFragment
      */
     protected Semaphore fileUsed = new Semaphore(1, true);
 
-    private boolean flashOn;
+    private Boolean flashOn;
     private int score = 0;
     private DisposableObserver<Integer> buttonsObservable;
     private CameraContract.Presenter presenter;
@@ -101,23 +102,44 @@ public abstract class CameraFragment
     }
 
     private void toggleFlash() {
+        if (Build.MANUFACTURER.equals(SAMSUNG)) {
+            toggleFlashSamsung();
+        } else {
+            toggleFlashRegular();
+        }
+
+    }
+
+    private void toggleFlashRegular() {
+        if (flashOn == null) {
+            flashOn = true;
+        } else if (flashOn) {
+            flashOn = false;
+        } else {
+            flashOn = null;
+        }
+        setFlashStatus();
+
+    }
+
+    private void toggleFlashSamsung() {
         flashOn = !flashOn;
         setFlashStatus();
     }
 
     protected void setFlashStatus() {
-        if (Build.MANUFACTURER.equals(SAMSUNG)) {
-            if (flashOn) {
-                turnFlashOn();
-            } else {
-                turnFlashOff();
-            }
-        } else {
+        if (flashOn == null) {
             setFlashAuto();
+        } else if (flashOn) {
+            turnFlashOn();
+        } else {
+            turnFlashOff();
         }
     }
 
     protected void bindViewElements(View view) {
+        bindFlashToggle(view.findViewById(R.id.flash_button));
+        bindSettingsButton(view);
         presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
         presenter.subscribeToEvents();
         buttonsObservable = getClicks(view, R.id.meh_button)
@@ -149,6 +171,11 @@ public abstract class CameraFragment
 
     }
 
+    private void bindSettingsButton(View view) {
+        view.findViewById(R.id.settings_button)
+                .setOnClickListener(view1 -> presenter.navigateToSettings());
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -174,13 +201,12 @@ public abstract class CameraFragment
         return flashOn;
     }
 
-    @SuppressWarnings("unused")
     protected void bindFlashToggle(ImageView flashToggle) {
         flashOn = false;
+        flashToggle.setVisibility(View.VISIBLE);
         if (Build.MANUFACTURER.equals(SAMSUNG)) {
-            flashToggle.setVisibility(View.VISIBLE);
             flashToggle.setOnClickListener(v -> {
-                toggleFlash();
+                toggleFlashSamsung();
                 if (flashOn) {
                     flashToggle.setImageResource(R.drawable.ic_flash_on_yellow);
                 } else {
@@ -188,7 +214,16 @@ public abstract class CameraFragment
                 }
             });
         } else {
-            flashToggle.setVisibility(View.GONE);
+            flashToggle.setOnClickListener(v -> {
+                toggleFlashRegular();
+                if (flashOn == null) {
+                    flashToggle.setImageResource(R.drawable.ic_flash_auto_blue);
+                } else if (flashOn) {
+                    flashToggle.setImageResource(R.drawable.ic_flash_on_yellow);
+                } else {
+                    flashToggle.setImageResource(R.drawable.ic_flash_off_gray);
+                }
+            });
         }
     }
 
@@ -233,9 +268,7 @@ public abstract class CameraFragment
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.thank_you_message)
-                    .setPositiveButton(R.string.restart, (dialog, id) -> {
-                        displayButtons();
-                    })
+                    .setPositiveButton(R.string.restart, (dialog, id) -> displayButtons())
                     .setNegativeButton(R.string.exit, (dialog, id) -> getActivity().finish());
             // Create the AlertDialog object and return it
             AlertDialog alertDialog = builder.create();

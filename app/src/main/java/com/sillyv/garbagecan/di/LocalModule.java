@@ -11,6 +11,7 @@ import dagger.Provides;
 
 /**
  * Created by Vasili on 10/5/2017.
+ *
  */
 @Module
 public class LocalModule {
@@ -27,7 +28,7 @@ public class LocalModule {
 
     @Provides
     @Singleton
-    RepositoryContract.Decryption providesEmail(EncryptionRepo encryptionRepo) {
+    RepositoryContract.Decryption providesSecurity(EncryptionRepo encryptionRepo) {
         return encryptionRepo;
     }
 }

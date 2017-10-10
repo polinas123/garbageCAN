@@ -1,11 +1,10 @@
 package com.sillyv.garbagecan.screen.main;
 
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.sillyv.garbagecan.R;
-import com.sillyv.garbagecan.screen.camera.CameraFragment;
+import com.sillyv.garbagecan.screen.navigation.Navigator;
 import com.sillyv.garbagecan.util.RxDialog;
 
 public class MainActivity
@@ -18,20 +17,13 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MainContract.Presenter presenter = new MainPresenter(this);
+        Navigator.getInstance().attach(getSupportFragmentManager(), R.id.container);
         presenter.init(this);
+
     }
 
     public void displayCamera() {
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        int width = Math.max(size.x, size.y);
-        int height = Math.min(size.x, size.y);
-        double maxRatio = (double) width / height;
-        double minRatio = (double) (width) / height;
-        CameraFragment fragment = CameraFragment.newInstance(
-                minRatio * .1, maxRatio,width ,height );
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, fragment).commit();
+        Navigator.getInstance().openCamera(this);
     }
 
     @Override

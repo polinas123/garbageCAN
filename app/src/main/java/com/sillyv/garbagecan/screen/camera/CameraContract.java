@@ -43,6 +43,8 @@ public interface CameraContract {
         void subscribeToEvents();
 
         void notifyPhotoSaved(Context context, FileUploadEvent fileUploadEvent);
+
+        void navigateToSettings();
     }
 
     interface Repo {
@@ -59,5 +61,9 @@ public interface CameraContract {
         Single<FileUploadEvent> decryptCredentials(FileUploadEvent fileUploadEvent);
 
         void detach();
+    }
+
+    interface Navigation {
+        void openSettings();
     }
 }

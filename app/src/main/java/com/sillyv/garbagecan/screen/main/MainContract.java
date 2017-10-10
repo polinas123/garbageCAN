@@ -4,6 +4,7 @@ import android.app.Activity;
 
 /**
  * Created by Vasili on 9/20/2017.
+ *
  */
 
 public interface MainContract {
@@ -18,5 +19,9 @@ public interface MainContract {
 
     interface Presenter {
         void init(Activity mainActivity);
+    }
+
+    interface Navigator {
+        void openCamera(Activity windowManager);
     }
 }

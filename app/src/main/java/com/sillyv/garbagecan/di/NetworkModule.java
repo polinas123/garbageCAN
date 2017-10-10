@@ -12,6 +12,7 @@ import dagger.Provides;
 
 /**
  * Created by Vasili on 10/5/2017.
+ *
  */
 
 @Module
@@ -30,14 +31,14 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    RepositoryContract.Image providesEmail(ImageRepo image) {
+    RepositoryContract.Image providesImage(ImageRepo image) {
         return image;
     }
 
 
     @Provides
     @Singleton
-    RepositoryContract.Database providesEmail(DataBaseRepo dataBase) {
+    RepositoryContract.Database providesDatabase(DataBaseRepo dataBase) {
         return dataBase;
     }
 

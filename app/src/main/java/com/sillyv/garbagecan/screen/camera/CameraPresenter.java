@@ -7,6 +7,7 @@ import android.util.SparseArray;
 
 import com.sillyv.garbagecan.core.BasePresenter;
 import com.sillyv.garbagecan.data.location.LatLonModel;
+import com.sillyv.garbagecan.screen.navigation.Navigator;
 import com.sillyv.garbagecan.util.HappinessColorMapper;
 
 import io.reactivex.Observable;
@@ -17,6 +18,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Vasili on 9/15/2017.
+ *
  */
 
 class CameraPresenter
@@ -28,13 +30,11 @@ class CameraPresenter
     private CameraContract.View view;
     private CameraContract.Repo repo;
 
-    public CameraPresenter(CameraContract.View view,
-                            CameraContract.Repo repo) {
+    CameraPresenter(CameraContract.View view,
+                    CameraContract.Repo repo) {
         this.view = view;
         this.repo = repo;
     }
-
-
 
 
     @Override
@@ -84,6 +84,11 @@ class CameraPresenter
 
                     }
                 });
+    }
+
+    @Override
+    public void navigateToSettings() {
+        Navigator.getInstance().openSettings();
     }
 
     private Function<SparseArray<String>, FileUploadEvent> injectCredentialsIntoUploadModel(
