@@ -3,12 +3,13 @@ package com.sillyv.garbagecan.screen.camera;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.sillyv.garbagecan.core.BasePresenter;
 import com.sillyv.garbagecan.data.location.LatLonModel;
 import com.sillyv.garbagecan.screen.navigation.Navigator;
 import com.sillyv.garbagecan.util.HappinessColorMapper;
+
+import java.io.File;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,6 +30,7 @@ class CameraPresenter
     private static final String TAG = "CameraPresenter";
     private CameraContract.View view;
     private CameraContract.Repo repo;
+    private File lastPhotoFileName;
 
     CameraPresenter(CameraContract.View view,
                     CameraContract.Repo repo) {
@@ -54,16 +56,19 @@ class CameraPresenter
                 .observeOn(Schedulers.io())
                 .flatMapSingle(fileUploadEvent -> repo.getLocation()
                         .map(CameraPresenter.this.injectLocationIntoUploadModel(fileUploadEvent)))
-                .flatMapSingle(fileUploadEvent -> repo.getCredentials()
-                        .map(CameraPresenter.this.injectCredentialsIntoUploadModel(fileUploadEvent)))
-                .flatMapSingle(fileUploadEvent -> repo.decryptCredentials(fileUploadEvent))
+                .doOnNext(fileUploadEvent -> Log.d(TAG,
+                        System.currentTimeMillis() + "After Location"))
                 .observeOn(Schedulers.io())
                 .flatMapSingle(fileUploadEvent -> repo.sendEmail(context, fileUploadEvent)
                         .toSingle(() -> fileUploadEvent))
+                .doOnNext(fileUploadEvent -> Log.d(TAG,
+                        System.currentTimeMillis() + "After Sending"))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<FileUploadEvent>() {
                     @Override
                     public void onNext(FileUploadEvent file) {
+                        lastPhotoFileName = file.getFile();
+                        view.showLastPhotoTaken(lastPhotoFileName);
                         view.hideProgressBar();
                         view.displayThankYouDialog();
                         Log.d(TAG,
@@ -91,20 +96,11 @@ class CameraPresenter
         Navigator.getInstance().openSettings();
     }
 
-    private Function<SparseArray<String>, FileUploadEvent> injectCredentialsIntoUploadModel(
-            FileUploadEvent fileUploadEvent) {
-        return integerStringMap -> {
-            fileUploadEvent.setCredentialsMap(integerStringMap);
-            return fileUploadEvent;
-        };
-    }
-
-    @NonNull
-    private Function<String, FileUploadEvent> injectRemotePathIntoUploadModel(FileUploadEvent cameraEventModel) {
-        return remotePath -> {
-            cameraEventModel.setUploadedFilePath(remotePath);
-            return cameraEventModel;
-        };
+    @Override
+    public void navigateToAdditionalInfo() {
+        if (lastPhotoFileName != null) {
+            Navigator.getInstance().openAdditionalInfo(lastPhotoFileName);
+        }
     }
 
     @NonNull

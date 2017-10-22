@@ -4,9 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.SparseArray;
 
 import com.sillyv.garbagecan.data.credentials.CredentialsManager;
+import com.sillyv.garbagecan.data.encryption.EncryptionRepo;
 import com.sillyv.garbagecan.screen.camera.FileUploadEvent;
 
 import java.io.File;
@@ -25,9 +25,6 @@ public class MailIntentService
     public static final String EXTRA_LONGITUDE = "EXTRA_LONGITUDE";
     public static final String EXTRA_SCORE = "EXTRA_SCORE";
     public static final String EXTRA_FILE_PATH = "EXTRA_FILE_PATH";
-    public static final String EXTRA_SENDER = "EXTRA_SENDER";
-    public static final String EXTRA_SENDER_PASSWORD = "EXTRA_SENDER_PASSWORD";
-    public static final String EXTRA_RECIPIENT = "EXTRA_RECIPIENT";
     public static final String MAIL_INTENT_SERVICE_LABEL = "MailIntentService";
     public static boolean isIntentServiceRunning = false;
 
@@ -40,7 +37,13 @@ public class MailIntentService
         isIntentServiceRunning = true;
         EmailRepo emailRepo = new EmailRepo();
         try {
-            emailRepo.sendEmail(getFileUploadEventFromIntent(intent));
+            String to = CredentialsManager.ENCRYPTED_RECIPIENT;
+            String from = CredentialsManager.ENCRYPTED_SENDER;
+            String password = CredentialsManager.ENCRYPTED_PASSWORD;
+            to = EncryptionRepo.decrypt(to, EncryptionRepo.RECIPIENT);
+            from = EncryptionRepo.decrypt(from, EncryptionRepo.SENDER);
+            password = EncryptionRepo.decrypt(password, EncryptionRepo.PASSWORD);
+            emailRepo.sendEmail(getFileUploadEventFromIntent(intent), to, from, password);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -53,15 +56,6 @@ public class MailIntentService
                 EXTRA_FILE_PATH)), intent.getIntExtra(EXTRA_SCORE, -1));
         fileUploadEvent.setLatitude(intent.getDoubleExtra(EXTRA_LATITUDE, 0));
         fileUploadEvent.setLongitude(intent.getDoubleExtra(EXTRA_LONGITUDE, 0));
-        SparseArray<String> credentialsMap = new SparseArray<>();
-        credentialsMap.put(CredentialsManager.SENDER, intent.getStringExtra(EXTRA_SENDER));
-        credentialsMap.put(CredentialsManager.SENDER_PASSWORD,
-                intent.getStringExtra(EXTRA_SENDER_PASSWORD));
-        credentialsMap.put(CredentialsManager.RECIPIENT, intent.getStringExtra(EXTRA_RECIPIENT));
-
-
-
-        fileUploadEvent.setCredentialsMap(credentialsMap);
         return fileUploadEvent;
     }
 }

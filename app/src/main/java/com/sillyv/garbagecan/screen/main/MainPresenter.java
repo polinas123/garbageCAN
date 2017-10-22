@@ -2,17 +2,16 @@ package com.sillyv.garbagecan.screen.main;
 
 import android.Manifest;
 import android.app.Activity;
-import android.util.Log;
+import android.os.Bundle;
 
 import com.sillyv.garbagecan.core.BasePresenter;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableObserver;
 
 /**
  * Created by Vasili on 9/20/2017.
+ *
  */
 
 public class MainPresenter
@@ -20,14 +19,13 @@ public class MainPresenter
         implements MainContract.Presenter {
 
     private MainContract.View view;
-    private static final String TAG = "MainPresenter";
 
-    public MainPresenter(MainContract.View view) {
+    MainPresenter(MainContract.View view) {
         this.view = view;
     }
 
 
-    public void init(Activity activity) {
+    public void init(Activity activity, Bundle savedInstanceState) {
         registerDisposable(
                 new RxPermissions(activity).request(
                         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -38,7 +36,9 @@ public class MainPresenter
                             @Override
                             public void onNext(Boolean granted) {
                                 if (granted) {
-                                    view.displayCamera();
+                                    if (savedInstanceState == null) {
+                                        view.displayCamera();
+                                    }
                                 } else {
                                     view.displayApology();
                                 }

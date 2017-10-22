@@ -18,7 +18,7 @@ public class MainActivity
         setContentView(R.layout.activity_main);
         MainContract.Presenter presenter = new MainPresenter(this);
         Navigator.getInstance().attach(getSupportFragmentManager(), R.id.container);
-        presenter.init(this);
+        presenter.init(this, savedInstanceState);
 
     }
 
@@ -37,9 +37,10 @@ public class MainActivity
                 .show()
                 .doOnEvent((aBoolean, throwable) -> finish())
                 .subscribe();
-
-
     }
 
-
+    @Override
+    public void onBackPressed() {
+        Navigator.getInstance().onBackPressed(this);
+    }
 }

@@ -34,6 +34,8 @@ public interface CameraContract {
         void  hideProgressBar();
 
         void hideButtons();
+
+        void showLastPhotoTaken(File file);
     }
 
 
@@ -45,6 +47,8 @@ public interface CameraContract {
         void notifyPhotoSaved(Context context, FileUploadEvent fileUploadEvent);
 
         void navigateToSettings();
+
+        void navigateToAdditionalInfo();
     }
 
     interface Repo {
@@ -65,5 +69,7 @@ public interface CameraContract {
 
     interface Navigation {
         void openSettings();
+
+        void openAdditionalInfo(File lastPhotofileName);
     }
 }

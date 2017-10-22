@@ -1,6 +1,7 @@
 package com.sillyv.garbagecan.data.encryption;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.sillyv.garbagecan.data.RepositoryContract;
 import com.sillyv.garbagecan.data.credentials.CredentialsManager;
@@ -12,24 +13,24 @@ import io.reactivex.Single;
 
 /**
  * Created by Vasili on 9/23/2017.
+ *
  */
 
 public class EncryptionRepo
         implements RepositoryContract.Decryption {
 
-    private static String PASSWORD = "MakeAmericaGreatAgain1234";
-    private static String RECIPIENT = "JerusalemMunicipality@jerusalem.muni.il";
-    private static String SENDER = "NirBarkat@jerusalem.muni.il";
+    private static final String TAG = "Presenter";
+    public static String PASSWORD = "MakeAmericaGreatAgain1234";
+    public static String RECIPIENT = "JerusalemMunicipality@jerusalem.muni.il";
+    public static String SENDER = "NirBarkat@jerusalem.muni.il";
 
-
-
-
-
-
-    private static String decrypt(String encrypt, String seed) {
+    public static String decrypt(String encrypt, String seed) {
+        Log.d(TAG, System.currentTimeMillis() + "Start Decrypt");
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(seed);
-        return encryptor.decrypt(encrypt);
+        String decrypt = encryptor.decrypt(encrypt);
+        Log.d(TAG, System.currentTimeMillis() + "End Decrypt");
+        return decrypt;
     }
 
 

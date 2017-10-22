@@ -17,9 +17,11 @@ import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Single;
+import io.reactivex.observers.DisposableObserver;
 
 /**
  * Created by Vasili on 9/15/2017.
+ *
  */
 
 public class LocationRepo
@@ -32,15 +34,37 @@ public class LocationRepo
     private final RxLocation rxLocation;
     private final LocationRequest locationRequest;
     private final RxPermissions rxPermissions;
+    private final DisposableObserver<LatLonModel> disposableObserver;
+    private LatLonModel latestLatLng;
 
     @SuppressLint("MissingPermission")
     private LocationRepo(Activity context) {
+        latestLatLng = getNoLocationFoundEver();
         rxLocation = new RxLocation(context);
-
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(5000);
         rxPermissions = new RxPermissions(context);
+
+        disposableObserver = rxLocation.settings()
+                .checkAndHandleResolution(locationRequest)
+                .flatMapObservable(this::getAddressObservable)
+                .subscribeWith(new DisposableObserver<LatLonModel>() {
+                    @Override
+                    public void onNext(LatLonModel latLonModel) {
+                        latestLatLng = latLonModel;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
     }
 
@@ -54,14 +78,12 @@ public class LocationRepo
 
     @Override
     public Single<LatLonModel> getLocation() {
-        return rxLocation.settings()
-                .checkAndHandleResolution(locationRequest)
-                .flatMapObservable(this::getAddressObservable)
-                .first(getNoLocationFoundEver());
+        return Single.just(latestLatLng);
     }
 
     @Override
     public void detach() {
+        disposableObserver.dispose();
         instance = null;
     }
 

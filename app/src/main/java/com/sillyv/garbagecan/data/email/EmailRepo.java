@@ -2,10 +2,8 @@ package com.sillyv.garbagecan.data.email;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.SparseArray;
 
 import com.sillyv.garbagecan.data.RepositoryContract;
-import com.sillyv.garbagecan.data.credentials.CredentialsManager;
 import com.sillyv.garbagecan.screen.camera.FileUploadEvent;
 
 import java.util.Date;
@@ -33,6 +31,7 @@ import io.reactivex.Completable;
 
 /**
  * Created by Vasili on 9/20/2017.
+ *
  */
 @ParametersAreNonnullByDefault
 public class EmailRepo
@@ -53,11 +52,10 @@ public class EmailRepo
     public EmailRepo() {
     }
 
-    public void sendEmail(FileUploadEvent fileUploadEvent) throws MessagingException {
-
-        SparseArray<String> credentialsMap = fileUploadEvent.getCredentialsMap();
-        final String username = credentialsMap.get(CredentialsManager.SENDER);
-        final String password = credentialsMap.get(CredentialsManager.SENDER_PASSWORD);
+    void sendEmail(FileUploadEvent fileUploadEvent,
+                   String to,
+                   String username,
+                   String password) throws MessagingException {
 
         Properties props = new Properties();
         props.put(MAIL_SMTP_AUTH, MAIL_SMTP_AUTH_VALUE);
@@ -78,8 +76,10 @@ public class EmailRepo
         message.setFrom(new InternetAddress(username));
 
         // Set To: header field of the header.
+//        message.setRecipients(Message.RecipientType.TO,
+//                InternetAddress.parse("vasili.fedotov@gmail.com"));
         message.setRecipients(Message.RecipientType.TO,
-                InternetAddress.parse(credentialsMap.get(CredentialsManager.RECIPIENT)));
+                InternetAddress.parse(to));
 
 
         // Set Subject: header field
@@ -115,13 +115,6 @@ public class EmailRepo
 
 //         Send message a
         Transport.send(message);
-
-
-    }
-
-    @Override
-    public Completable sendEmailRx(FileUploadEvent fileUploadEvent) {
-        return Completable.fromAction(() -> sendEmail(fileUploadEvent));
     }
 
 
@@ -137,13 +130,6 @@ public class EmailRepo
         intent.putExtra(MailIntentService.EXTRA_LONGITUDE, fileUploadEvent.getLongitude());
         intent.putExtra(MailIntentService.EXTRA_SCORE, fileUploadEvent.getScore());
         intent.putExtra(MailIntentService.EXTRA_FILE_PATH, fileUploadEvent.getFile().getPath());
-        SparseArray<String> credentialsMap = fileUploadEvent.getCredentialsMap();
-        intent.putExtra(MailIntentService.EXTRA_SENDER,
-                credentialsMap.get(CredentialsManager.SENDER));
-        intent.putExtra(MailIntentService.EXTRA_SENDER_PASSWORD,
-                credentialsMap.get(CredentialsManager.SENDER_PASSWORD));
-        intent.putExtra(MailIntentService.EXTRA_RECIPIENT,
-                credentialsMap.get(CredentialsManager.RECIPIENT));
         context.startService(intent);
     }
 }

@@ -53,11 +53,9 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.sillyv.garbagecan.R;
 import com.sillyv.garbagecan.screen.camera.CameraFragment;
 import com.sillyv.garbagecan.util.AutoFitTextureView;
-
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -251,9 +249,38 @@ public class Camera2BasicFragment
      * Orientation of the camera sensor
      */
     private int mSensorOrientation;
+    /**
+     * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a {@link
+     * TextureView}.
+     */
+    private final TextureView.SurfaceTextureListener mSurfaceTextureListener =
+            new TextureView.SurfaceTextureListener() {
 
+                @Override
+                public void onSurfaceTextureAvailable(SurfaceTexture texture,
+                                                      int width,
+                                                      int height) {
+                    openCamera(width, height);
+                }
+
+                @Override
+                public void onSurfaceTextureSizeChanged(SurfaceTexture texture,
+                                                        int width,
+                                                        int height) {
+                    configureTransform(width, height);
+                }
+
+                @Override
+                public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
+                    return true;
+                }
+
+                @Override
+                public void onSurfaceTextureUpdated(SurfaceTexture texture) {
+                }
+            };
     private CaptureRequest.Builder captureBuilder;
-
+    private boolean isCapturing = false;
     /**
      * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
      */
@@ -329,7 +356,6 @@ public class Camera2BasicFragment
                     process(result);
                 }
             };
-
     /**
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its state.
      */
@@ -368,39 +394,6 @@ public class Camera2BasicFragment
                 }
             };
 
-    /**
-     * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a {@link
-     * TextureView}.
-     */
-    private final TextureView.SurfaceTextureListener mSurfaceTextureListener =
-            new TextureView.SurfaceTextureListener() {
-
-                @Override
-                public void onSurfaceTextureAvailable(SurfaceTexture texture,
-                                                      int width,
-                                                      int height) {
-                    openCamera(width, height);
-                }
-
-                @Override
-                public void onSurfaceTextureSizeChanged(SurfaceTexture texture,
-                                                        int width,
-                                                        int height) {
-                    configureTransform(width, height);
-                }
-
-                @Override
-                public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
-                    return true;
-                }
-
-                @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture texture) {
-                }
-            };
-
-    private boolean isCapturing = false;
-
     //    @Override
     //    public void onCreate(Bundle savedInstanceState){
     //
@@ -417,6 +410,59 @@ public class Camera2BasicFragment
             return null;
         }
         return new Camera2BasicFragment();
+    }
+
+    /**
+     * Given {@code choices} of {@code Size}s supported by a camera, choose the smallest one that is
+     * at least as large as the respective texture view size, and that is at most as large as the
+     * respective max size, and whose aspect ratio matches with the specified value. If such size
+     * doesn't exist, choose the largest one that is at most as large as the respective max size, and
+     * whose aspect ratio matches with the specified value.
+     *
+     * @param choices           The list of sizes that the camera supports for the intended output class
+     * @param textureViewWidth  The width of the texture view relative to sensor coordinate
+     * @param textureViewHeight The height of the texture view relative to sensor coordinate
+     * @param maxWidth          The maximum width that can be chosen
+     * @param maxHeight         The maximum height that can be chosen
+     * @param aspectRatio       The aspect ratio
+     * @return The optimal {@code Size}, or an arbitrary one if none were big enough
+     */
+    private static Size chooseOptimalSize(
+            Size[] choices,
+            int textureViewWidth,
+            int textureViewHeight,
+            int maxWidth,
+            int maxHeight,
+            Size aspectRatio) {
+
+        // Collect the supported resolutions that are at least as big as the preview Surface
+        List<Size> bigEnough = new ArrayList<>();
+        // Collect the supported resolutions that are smaller than the preview Surface
+        List<Size> notBigEnough = new ArrayList<>();
+        int w = aspectRatio.getWidth();
+        int h = aspectRatio.getHeight();
+        for (Size option : choices) {
+            if (option.getWidth() <= maxWidth
+                    && option.getHeight() <= maxHeight
+                    && option.getHeight() == option.getWidth() * h / w) {
+                if (option.getWidth() >= textureViewWidth && option.getHeight() >= textureViewHeight) {
+                    bigEnough.add(option);
+                } else {
+                    notBigEnough.add(option);
+                }
+            }
+        }
+
+        // Pick the smallest of those big enough. If there is no one big enough, pick the
+        // largest of those not big enough.
+        if (bigEnough.size() > 0) {
+            return Collections.min(bigEnough, new CompareSizesByArea());
+        } else if (notBigEnough.size() > 0) {
+            return Collections.max(notBigEnough, new CompareSizesByArea());
+        } else {
+            Log.e(TAG, "Couldn't find any suitable preview size");
+            return choices[0];
+        }
     }
 
     @Override
@@ -731,59 +777,6 @@ public class Camera2BasicFragment
         mTextureView.setTransform(matrix);
     }
 
-    /**
-     * Given {@code choices} of {@code Size}s supported by a camera, choose the smallest one that is
-     * at least as large as the respective texture view size, and that is at most as large as the
-     * respective max size, and whose aspect ratio matches with the specified value. If such size
-     * doesn't exist, choose the largest one that is at most as large as the respective max size, and
-     * whose aspect ratio matches with the specified value.
-     *
-     * @param choices           The list of sizes that the camera supports for the intended output class
-     * @param textureViewWidth  The width of the texture view relative to sensor coordinate
-     * @param textureViewHeight The height of the texture view relative to sensor coordinate
-     * @param maxWidth          The maximum width that can be chosen
-     * @param maxHeight         The maximum height that can be chosen
-     * @param aspectRatio       The aspect ratio
-     * @return The optimal {@code Size}, or an arbitrary one if none were big enough
-     */
-    private static Size chooseOptimalSize(
-            Size[] choices,
-            int textureViewWidth,
-            int textureViewHeight,
-            int maxWidth,
-            int maxHeight,
-            Size aspectRatio) {
-
-        // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
-        // Collect the supported resolutions that are smaller than the preview Surface
-        List<Size> notBigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Size option : choices) {
-            if (option.getWidth() <= maxWidth
-                    && option.getHeight() <= maxHeight
-                    && option.getHeight() == option.getWidth() * h / w) {
-                if (option.getWidth() >= textureViewWidth && option.getHeight() >= textureViewHeight) {
-                    bigEnough.add(option);
-                } else {
-                    notBigEnough.add(option);
-                }
-            }
-        }
-
-        // Pick the smallest of those big enough. If there is no one big enough, pick the
-        // largest of those not big enough.
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizesByArea());
-        } else if (notBigEnough.size() > 0) {
-            return Collections.max(notBigEnough, new CompareSizesByArea());
-        } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
-            return choices[0];
-        }
-    }
-
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (mFlashSupported) {
             requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
@@ -804,7 +797,7 @@ public class Camera2BasicFragment
             mCaptureSession.capture(mPreviewRequestBuilder.build(),
                     mCaptureCallback,
                     mBackgroundHandler);
-        } catch (CameraAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

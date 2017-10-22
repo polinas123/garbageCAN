@@ -13,15 +13,19 @@ import com.sillyv.garbagecan.R;
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment
-        extends Fragment {
+        extends Fragment
+        implements SettingsContract.View {
 
+
+    private View historyArrowButton;
+    private SettingsContract.Presenter presenter;
 
     public SettingsFragment() {
         // Required empty public constructor
     }
 
 
-    public SettingsFragment newInstance() {
+    public static SettingsFragment newInstance() {
         return new SettingsFragment();
     }
 
@@ -29,7 +33,17 @@ public class SettingsFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        presenter = new SettingsPresenter();
+        initViews(view);
+        presenter.init(this);
+        return view;
+    }
+
+    private void initViews(View view) {
+        View historyButton = view.findViewById(R.id.show_history_button);
+        historyButton.setOnClickListener(view1 -> presenter.showHistory());
     }
 
 }

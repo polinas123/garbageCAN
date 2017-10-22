@@ -1,21 +1,20 @@
 package com.sillyv.garbagecan.screen.camera;
 
+import android.app.AlertDialog;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.jakewharton.rxbinding2.view.RxView;
 import com.sillyv.garbagecan.R;
 import com.sillyv.garbagecan.data.Repository;
-import com.sillyv.garbagecan.util.ButtonIDHappinessMapper;
 import com.sillyv.garbagecan.util.FilesUtils;
 import com.sillyv.garbagecan.util.camera.Camera2BasicFragment;
 import com.sillyv.garbagecan.util.camera.CameraOldBasicFragment;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import io.reactivex.Observable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.PublishSubject;
 
 /**
@@ -73,12 +71,12 @@ public abstract class CameraFragment
 
     private Boolean flashOn;
     private int score = 0;
-    private DisposableObserver<Integer> buttonsObservable;
     private CameraContract.Presenter presenter;
     private ProgressBar progressBar;
     private PublishSubject<FileUploadEvent> subject = PublishSubject.create();
     private List<View> buttons;
-    private ImageView takenImage;
+    private ImageView smallPhotoPreview;
+    private View smallPhotoPreviewHint;
 
     public static CameraFragment newInstance(
             double minPreviewRatio,
@@ -142,33 +140,31 @@ public abstract class CameraFragment
         bindSettingsButton(view);
         presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
         presenter.subscribeToEvents();
-        buttonsObservable = getClicks(view, R.id.meh_button)
-                .mergeWith(getClicks(view, R.id.happy_button))
-                .mergeWith(getClicks(view, R.id.sad_button))
-                .subscribeWith(new DisposableObserver<Integer>() {
-                    @Override
-                    public void onNext(Integer integer) {
-                        score = integer;
-                        takePicture();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-        takenImage = view.findViewById(R.id.taken_image_view);
+        View.OnClickListener onClickListener = view1 -> {
+            switch (view1.getId()) {
+                case R.id.meh_button:
+                    score = 1;
+                    break;
+                case R.id.happy_button:
+                    score = 0;
+                    break;
+                case R.id.sad_button:
+                    score = 2;
+                    break;
+            }
+            takePicture();
+        };
+        view.findViewById(R.id.meh_button).setOnClickListener(onClickListener);
+        view.findViewById(R.id.happy_button).setOnClickListener(onClickListener);
+        view.findViewById(R.id.sad_button).setOnClickListener(onClickListener);
         progressBar = view.findViewById(R.id.progress_bar);
         buttons = new ArrayList<>();
         buttons.add(view.findViewById(R.id.meh_button));
         buttons.add(view.findViewById(R.id.happy_button));
         buttons.add(view.findViewById(R.id.sad_button));
-
+        smallPhotoPreview = view.findViewById(R.id.small_preview_of_taken_photo);
+        smallPhotoPreview.setOnClickListener(view12 -> presenter.navigateToAdditionalInfo());
+        smallPhotoPreviewHint = view.findViewById(R.id.small_preview_of_taken_photo_hint);
     }
 
     private void bindSettingsButton(View view) {
@@ -179,15 +175,7 @@ public abstract class CameraFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        buttonsObservable.dispose();
         presenter.detach();
-    }
-
-    @NonNull
-    private Observable<Integer> getClicks(View view, int viewID) {
-        return RxView.clicks(view.findViewById(viewID))
-                .map(o -> viewID)
-                .map(ButtonIDHappinessMapper::getHappinessFromButton);
     }
 
     protected abstract void setFlashAuto();
@@ -282,20 +270,12 @@ public abstract class CameraFragment
     private void displayButtons() {
         for (View button : buttons) {
             button.setVisibility(View.VISIBLE);
-
         }
     }
 
     @Override
     public void notifyImageBeingSent(int happinessFromButton, File file) {
         progressBar.setVisibility(View.VISIBLE);
-        takenImage.setVisibility(View.VISIBLE);
-        Picasso.with(takenImage.getContext())
-                .load(file)
-                .resize(CameraFragment.width, CameraFragment.height)
-                .centerCrop()
-                .into(takenImage);
-
         progressBar.getIndeterminateDrawable()
                 .setColorFilter(happinessFromButton, android.graphics.PorterDuff.Mode.MULTIPLY);
 
@@ -305,7 +285,6 @@ public abstract class CameraFragment
     @Override
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
-        takenImage.setVisibility(View.GONE);
     }
 
     @Override
@@ -313,6 +292,26 @@ public abstract class CameraFragment
         for (View button : buttons) {
             button.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void showLastPhotoTaken(File file) {
+        smallPhotoPreview.setVisibility(View.VISIBLE);
+        Picasso.with(getContext())
+                .load(file)
+                .config(Bitmap.Config.RGB_565)
+//                .resize(56, 56)
+                .into(smallPhotoPreview, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        smallPhotoPreviewHint.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
 }

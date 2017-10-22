@@ -11,6 +11,7 @@ import io.reactivex.Single;
 
 /**
  * Created by Vasili on 9/15/2017.
+ *
  */
 
 public interface RepositoryContract {
@@ -20,7 +21,6 @@ public interface RepositoryContract {
     }
 
     interface Email {
-        Completable sendEmailRx(FileUploadEvent fileUploadEvent);
 
         Completable sendEmailViaIntentServiceRx(Context context,
                                                 FileUploadEvent fileUploadEvent);

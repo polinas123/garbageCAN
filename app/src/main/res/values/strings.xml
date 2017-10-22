@@ -23,6 +23,19 @@
     <string name="other_title">Other:</string>
     <string name="show_upload_history">Show upload History</string>
     <string name="show_history_arrow_button">show_history_arrow_button</string>
+    <string name="history_toolbar_text_view">History</string>
+    <string name="additional_info_toolbar_text_view">Additional Info</string>
+    <string name="update_photo_details_button">Update Photo details</string>
+    <string name="additional_info_here_hint">Additional_info_here</string>
+    <string name="taken_photo_preview">Taken Photo Preview</string>
+    <string name="settings_toolbar_text_view">Settings</string>
+    <string name="click_here_to_send_additional_info"><![CDATA[Click here to send additional info ->]]></string>
+    <string name="delete_all_button">Delete All</string>
+    <string name="time">Time:</string>
+    <string name="location">Location:</string>
+    <string name="history_image_preview">History Image Preview</string>
+    <string name="delete_button">Delete Button</string>
+    <string name="last_taken_photo">Last Taken Photo</string>
 
 
 </resources>
