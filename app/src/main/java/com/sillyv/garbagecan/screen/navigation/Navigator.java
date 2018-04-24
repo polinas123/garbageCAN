@@ -5,49 +5,58 @@ import android.graphics.Point;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.sillyv.garbagecan.screen.camera.CameraContract;
 import com.sillyv.garbagecan.screen.camera.CameraFragment;
 import com.sillyv.garbagecan.screen.history.HistoryFragment;
 import com.sillyv.garbagecan.screen.info.InfoFragment;
-import com.sillyv.garbagecan.screen.main.MainContract;
 import com.sillyv.garbagecan.screen.settings.SettingsContract;
 import com.sillyv.garbagecan.screen.settings.SettingsFragment;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Created by Vasili on 10/10/2017.
- *
+ * Class created by Vasili on 10/10/2017.
  */
 
 public class Navigator
-        implements CameraContract.Navigation, MainContract.Navigator, SettingsContract.Navigator {
+        implements CameraContract.Navigation, SettingsContract.Navigator {
 
     private static final String CAMERA_BACKSTACK_TAG = "Camera";
     private static final String SETTINGS_BACKSTACK_TAG = "SETTINGS_BACKSTACK_TAG";
     private static final String HISTORY_BACKSTACK_TAG = "History_backstack_tag";
     private static final String ADDITIONAL_INFO_BACKSTACK_TAG = "ADDITIONAL_INFO_BACKSTACK_TAG";
-    private static Navigator instance;
+
+    private static Map<String, Navigator> navigationMap = new HashMap<>();
     private FragmentManager manager;
     private Integer container;
+    private Activity activity;
 
-    private Navigator() {
+    private Navigator(AppCompatActivity activity) {
+        this.activity = activity;
+        manager = activity.getSupportFragmentManager();
     }
 
-    public static Navigator getInstance() {
-        if (instance == null) {
-            instance = new Navigator();
+    public static Navigator getInstance(AppCompatActivity activity) {
+        Navigator navigator = navigationMap.get(activity.getClass().getCanonicalName());
+        if (navigator == null) {
+            navigator = new Navigator(activity);
+            navigationMap.put(activity.getClass().getCanonicalName(), navigator);
         }
-        return instance;
+        return navigator;
     }
 
+    @SuppressWarnings("unused")
     public void attach(FragmentManager manager, Integer container) {
         this.manager = manager;
         this.container = container;
     }
 
+    @SuppressWarnings("unused")
     public void detach() {
         this.manager = null;
     }
@@ -57,7 +66,7 @@ public class Navigator
     public void openSettings() {
         Fragment fragment = SettingsFragment.newInstance();
         if (manager == null || container == null) {
-            throw new RuntimeException("Please Instanciate Fragment manager");
+            throw new RuntimeException("Please Instantiate Fragment manager");
         }
         FragmentTransaction fragmentTransaction = manager.beginTransaction();
         fragmentTransaction.replace(container, fragment);
@@ -66,14 +75,14 @@ public class Navigator
     }
 
     @Override
-    public void openAdditionalInfo(File lastPhotofileName) {
-        InfoFragment fragment = InfoFragment.getInstance(lastPhotofileName.getPath());
+    public void openAdditionalInfo(File lastPhotoFileName) {
+        InfoFragment fragment = InfoFragment.getInstance(lastPhotoFileName.getPath());
         manager.beginTransaction().replace(container, fragment).addToBackStack(
                 ADDITIONAL_INFO_BACKSTACK_TAG).commit();
     }
 
-    @Override
-    public void openCamera(Activity activity) {
+
+    public void openCamera() {
         CameraFragment fragment = getCameraFragment(activity.getWindowManager());
         manager.beginTransaction()
                 .add(container, fragment).addToBackStack(CAMERA_BACKSTACK_TAG).commit();
@@ -81,8 +90,8 @@ public class Navigator
 
     }
 
-    @Override
-    public void onBackPressed(MainContract.View activity) {
+
+    public void onBackPressed() {
         if (manager.getBackStackEntryCount() == 1) {
             activity.finish();
         } else {

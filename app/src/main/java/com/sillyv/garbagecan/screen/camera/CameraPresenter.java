@@ -18,8 +18,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Vasili on 9/15/2017.
- *
+ * Class created by Vasili on 9/15/2017.
  */
 
 class CameraPresenter
@@ -28,14 +27,16 @@ class CameraPresenter
 
 
     private static final String TAG = "CameraPresenter";
+    private final Navigator navigator;
     private CameraContract.View view;
     private CameraContract.Repo repo;
     private File lastPhotoFileName;
 
     CameraPresenter(CameraContract.View view,
-                    CameraContract.Repo repo) {
+                    CameraContract.Repo repo, Navigator navigator) {
         this.view = view;
         this.repo = repo;
+        this.navigator = navigator;
     }
 
 
@@ -93,13 +94,13 @@ class CameraPresenter
 
     @Override
     public void navigateToSettings() {
-        Navigator.getInstance().openSettings();
+        navigator.openSettings();
     }
 
     @Override
     public void navigateToAdditionalInfo() {
         if (lastPhotoFileName != null) {
-            Navigator.getInstance().openAdditionalInfo(lastPhotoFileName);
+            navigator.openAdditionalInfo(lastPhotoFileName);
         }
     }
 

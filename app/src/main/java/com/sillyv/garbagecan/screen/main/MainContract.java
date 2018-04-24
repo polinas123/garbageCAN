@@ -1,6 +1,5 @@
 package com.sillyv.garbagecan.screen.main;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 /**
@@ -10,23 +9,18 @@ import android.os.Bundle;
 
 public interface MainContract {
 
-
     interface View  {
-        void displayCamera();
-
         void displayApology();
 
-        void finish();
+        void promptForSignUp(Bundle savedInstanceState);
     }
-
 
     interface Presenter {
-        void init(Activity mainActivity, Bundle savedInstanceState);
+        void init(Bundle savedInstanceState);
+
+        void onBackPressed(MainActivity mainActivity);
+
+        void handleSignUpResponse(Boolean aBoolean, Bundle savedInstanceState);
     }
 
-    interface Navigator {
-        void openCamera(Activity windowManager);
-
-        void onBackPressed(MainContract.View activity);
-    }
 }

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -9,14 +9,20 @@
     </style>
 
 
-    <style name="meh_fab" parent="AppTheme" >
+    <style name="GeneralFab" parent="AppTheme">
+        <item name="android:alpha">0.8</item>
+
+    </style>
+
+    <style name="meh_fab" parent="GeneralFab">
         <item name="colorAccent">@color/yellow</item>
     </style>
 
-    <style name="happy_fab" parent="AppTheme" >
+    <style name="happy_fab" parent="GeneralFab">
         <item name="colorAccent">@color/green</item>
     </style>
-    <style name="sad_fab" parent="AppTheme" >
+
+    <style name="sad_fab" parent="GeneralFab">
         <item name="colorAccent">@color/red</item>
     </style>
 

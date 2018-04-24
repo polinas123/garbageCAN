@@ -26,112 +26,149 @@
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar"
-
-        />
-
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <TextView
-        android:id="@+id/title_question"
+        android:id="@+id/title_signup_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/upload_question_title"
+        android:text="@string/please_enter_your_email_to_signup"
         android:textColor="#6666ff"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <Switch
-        android:id="@+id/wifi_switch"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/name_field"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/wifi_only"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_question" />
+        android:hint="@string/name"
+        app:layout_constraintTop_toBottomOf="@+id/title_signup_question" />
 
-    <Switch
-        android:id="@+id/chargin_switch"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/email_field"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/charge_only"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wifi_switch" />
-
+        android:hint="@string/email_address"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@+id/name_field" />
 
     <TextView
-        android:id="@+id/other_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/other_title"
+        android:text="@string/send"
         android:textColor="#6666ff"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chargin_switch" />
-
-
-    <Switch
-        android:id="@+id/usage_switch"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/usage_reports"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/other_question" />
-
-    <View
-        android:id="@+id/top_history_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usage_switch" />
-
-
-    <TextView
-        android:id="@+id/show_history_button"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="@string/show_upload_history"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_history_divider" />
-
-
-    <ImageView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:contentDescription="@string/show_history_arrow_button"
-        android:src="@drawable/ic_arrow_black"
-        app:layout_constraintBottom_toBottomOf="@id/show_history_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/show_history_button"
+        app:layout_constraintTop_toBottomOf="@id/email_field"
 
         />
 
-    <View
-        android:id="@+id/bottom_history_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/show_history_button" />
+    <!--<TextView-->
+    <!--android:id="@+id/title_question"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:text="@string/upload_question_title"-->
+    <!--android:textColor="#6666ff"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/toolbar" />-->
+
+    <!--<Switch-->
+    <!--android:id="@+id/wifi_switch"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:text="@string/wifi_only"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/title_question" />-->
+
+    <!--<Switch-->
+    <!--android:id="@+id/chargin_switch"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:text="@string/charge_only"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/wifi_switch" />-->
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/other_question"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:text="@string/other_title"-->
+    <!--android:textColor="#6666ff"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/chargin_switch" />-->
+
+
+    <!--<Switch-->
+    <!--android:id="@+id/usage_switch"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:text="@string/usage_reports"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/other_question" />-->
+
+    <!--<View-->
+    <!--android:id="@+id/top_history_divider"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_marginTop="16dp"-->
+    <!--android:background="#000000"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/usage_switch" />-->
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/show_history_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="56dp"-->
+    <!--android:gravity="center_vertical"-->
+    <!--android:paddingEnd="16dp"-->
+    <!--android:paddingStart="16dp"-->
+    <!--android:text="@string/show_upload_history"-->
+    <!--android:textColor="#000000"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/top_history_divider" />-->
+
+
+    <!--<ImageView-->
+
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="16dp"-->
+    <!--android:contentDescription="@string/show_history_arrow_button"-->
+    <!--android:src="@drawable/ic_arrow_black"-->
+    <!--app:layout_constraintBottom_toBottomOf="@id/show_history_button"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="@id/show_history_button"-->
+
+    <!--/>-->
+
+    <!--<View-->
+    <!--android:id="@+id/bottom_history_divider"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:background="#000000"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/show_history_button" />-->
 
 
 </android.support.constraint.ConstraintLayout>

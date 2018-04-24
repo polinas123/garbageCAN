@@ -36,6 +36,13 @@
     <string name="history_image_preview">History Image Preview</string>
     <string name="delete_button">Delete Button</string>
     <string name="last_taken_photo">Last Taken Photo</string>
+    <string name="permissions_denied">Permissions denied</string>
+    <string name="all_permissions_apology">All permissions are required to use this app, we are sorry for the inconvenience.</string>
+    <string name="goodbye">Goodbye</string>
+    <string name="email_address">eMail address</string>
+    <string name="please_enter_your_email_to_signup">please enter your name and eMail address.</string>
+    <string name="name">Name</string>
+    <string name="send">SEND</string>
 
 
 </resources>

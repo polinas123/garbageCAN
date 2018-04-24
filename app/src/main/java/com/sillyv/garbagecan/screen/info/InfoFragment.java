@@ -1,8 +1,10 @@
 package com.sillyv.garbagecan.screen.info;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 
 /**
- * Created by Vasili on 10/22/2017.
+ * Class created by Vasili on 10/22/2017.
  */
 
 public class InfoFragment
@@ -24,6 +26,7 @@ public class InfoFragment
 
 
     public static final String PATH_EXTRA = "PATH";
+    private final Navigator navigator = Navigator.getInstance((AppCompatActivity) getActivity());
 
     public static InfoFragment getInstance(String path) {
         InfoFragment fragment = new InfoFragment();
@@ -34,7 +37,7 @@ public class InfoFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_info, container, false);
@@ -53,7 +56,7 @@ public class InfoFragment
         view.findViewById(R.id.update_button).setOnClickListener(view1 -> {
             FragmentActivity activity = getActivity();
             if (activity instanceof MainContract.View) {
-                Navigator.getInstance().onBackPressed((MainContract.View) activity);
+                navigator.onBackPressed();
             }
         });
         return view;

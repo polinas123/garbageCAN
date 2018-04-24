@@ -1,8 +1,7 @@
 package com.sillyv.garbagecan;
 
 /**
- * Created by Vasili on 9/2/2017.
- *
+ * Class created by Vasili on 9/2/2017.
  */
 
 public class PermissionsDeniedEvent {
@@ -19,4 +18,8 @@ public class PermissionsDeniedEvent {
     public void setS(String s) {
         this.s = s;
     }
+
+
 }
+
+

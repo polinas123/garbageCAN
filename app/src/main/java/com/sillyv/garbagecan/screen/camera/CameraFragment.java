@@ -1,21 +1,21 @@
 package com.sillyv.garbagecan.screen.camera;
 
 import android.app.AlertDialog;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.sillyv.garbagecan.R;
 import com.sillyv.garbagecan.data.Repository;
+import com.sillyv.garbagecan.screen.navigation.Navigator;
 import com.sillyv.garbagecan.util.FilesUtils;
 import com.sillyv.garbagecan.util.camera.Camera2BasicFragment;
 import com.sillyv.garbagecan.util.camera.CameraOldBasicFragment;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,8 +26,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
 /**
- * Created by Vasili on 09/11/2016.
- *
+ * Class created by Vasili on 09/11/2016.
  */
 public abstract class CameraFragment
         extends Fragment
@@ -40,8 +39,6 @@ public abstract class CameraFragment
     private static final String BACK_CAMERA_ARG = "BACK_CAMERA";
     private static final String MINIMUM_RATIO = "MINIMUM_PREVIEW_RATIO";
     private static final String MAXIMUM_RATIO = "MAXIMUM_PREVIEW_RATIO";
-    private static int width;
-    private static int height;
     /*
      * This will be prefixed to the filenames of the captured photos, located in the external storage
      * (not the public one), with the date and time, in the jpeg format
@@ -75,14 +72,10 @@ public abstract class CameraFragment
     private ProgressBar progressBar;
     private PublishSubject<FileUploadEvent> subject = PublishSubject.create();
     private List<View> buttons;
-    private ImageView smallPhotoPreview;
-    private View smallPhotoPreviewHint;
 
     public static CameraFragment newInstance(
             double minPreviewRatio,
             double maxPreviewRatio, int width, int height) {
-        CameraFragment.width = width;
-        CameraFragment.height = height;
         CameraFragment newFragment;
         if (Build.VERSION.SDK_INT < 21) { //old Camera api
             newFragment = CameraOldBasicFragment.newInstance();
@@ -103,7 +96,7 @@ public abstract class CameraFragment
         if (Build.MANUFACTURER.equals(SAMSUNG)) {
             toggleFlashSamsung();
         } else {
-            toggleFlashRegular();
+            toggleFlashSamsung();
         }
 
     }
@@ -138,7 +131,7 @@ public abstract class CameraFragment
     protected void bindViewElements(View view) {
         bindFlashToggle(view.findViewById(R.id.flash_button));
         bindSettingsButton(view);
-        presenter = new CameraPresenter(this, Repository.getInstance(getActivity()));
+        presenter = new CameraPresenter(this, Repository.getInstance(getActivity()), Navigator.getInstance((AppCompatActivity) getActivity()));
         presenter.subscribeToEvents();
         View.OnClickListener onClickListener = view1 -> {
             switch (view1.getId()) {
@@ -162,9 +155,9 @@ public abstract class CameraFragment
         buttons.add(view.findViewById(R.id.meh_button));
         buttons.add(view.findViewById(R.id.happy_button));
         buttons.add(view.findViewById(R.id.sad_button));
-        smallPhotoPreview = view.findViewById(R.id.small_preview_of_taken_photo);
+        ImageView smallPhotoPreview = view.findViewById(R.id.small_preview_of_taken_photo);
         smallPhotoPreview.setOnClickListener(view12 -> presenter.navigateToAdditionalInfo());
-        smallPhotoPreviewHint = view.findViewById(R.id.small_preview_of_taken_photo_hint);
+        View smallPhotoPreviewHint = view.findViewById(R.id.small_preview_of_taken_photo_hint);
     }
 
     private void bindSettingsButton(View view) {
@@ -203,10 +196,15 @@ public abstract class CameraFragment
             });
         } else {
             flashToggle.setOnClickListener(v -> {
-                toggleFlashRegular();
-                if (flashOn == null) {
-                    flashToggle.setImageResource(R.drawable.ic_flash_auto_blue);
-                } else if (flashOn) {
+                toggleFlashSamsung();
+//                if (flashOn == null) {
+//                    flashToggle.setImageResource(R.drawable.ic_flash_auto_blue);
+//                } else if (flashOn) {
+//                    flashToggle.setImageResource(R.drawable.ic_flash_on_yellow);
+//                } else {
+//                    flashToggle.setImageResource(R.drawable.ic_flash_off_gray);
+//                }
+                if (flashOn) {
                     flashToggle.setImageResource(R.drawable.ic_flash_on_yellow);
                 } else {
                     flashToggle.setImageResource(R.drawable.ic_flash_off_gray);
@@ -256,8 +254,14 @@ public abstract class CameraFragment
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.thank_you_message)
+                    .setCancelable(false)
                     .setPositiveButton(R.string.restart, (dialog, id) -> displayButtons())
-                    .setNegativeButton(R.string.exit, (dialog, id) -> getActivity().finish());
+                    .setNegativeButton(R.string.exit, (dialog, id) -> {
+                        FragmentActivity activity = CameraFragment.this.getActivity();
+                        if (activity != null) {
+                            activity.finish();
+                        }
+                    });
             // Create the AlertDialog object and return it
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -296,22 +300,22 @@ public abstract class CameraFragment
 
     @Override
     public void showLastPhotoTaken(File file) {
-        smallPhotoPreview.setVisibility(View.VISIBLE);
-        Picasso.with(getContext())
-                .load(file)
-                .config(Bitmap.Config.RGB_565)
-//                .resize(56, 56)
-                .into(smallPhotoPreview, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        smallPhotoPreviewHint.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+//        smallPhotoPreview.setVisibility(View.VISIBLE);
+//        Picasso.with(getContext())
+//                .load(file)
+//                .config(Bitmap.Config.RGB_565)
+////                .resize(56, 56)
+//                .into(smallPhotoPreview, new Callback() {
+//                    @Override
+//                    public void onSuccess() {
+//                        smallPhotoPreviewHint.setVisibility(View.VISIBLE);
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
     }
 
 }
