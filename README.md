@@ -24,6 +24,8 @@ We need YOU:
 Right now all the code is on the Android-Master Branch,  
 https://github.com/polinas123/garbageCAN/tree/Silly/Android-Master
 
+ANd here is a downloadable version of the current app:
+https://drive.google.com/open?id=13WE2CtERA-aXvje0c2qmDo8Ya-jx-uhL
 
 The app is a basic java application, Using RxJAva,
 and Retrofit for network calls. 
