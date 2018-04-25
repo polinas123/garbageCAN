@@ -9,6 +9,7 @@ We need YOU:
  - We have an app ready that takes and save photos.
  - It has basic UI.
  - Currently as a workaround we upload the photos using the email system. this needs to be rewritten with Retrofit as soon as we have a server
+ 
 1.b frontend programmers: web developer.
  - we need a dashboard to access all uploaded photos and their data. with the ability to filter by parameters.
 2. backend programmers: NodeJS, Java. or any other commonly used  modern Backend language.
